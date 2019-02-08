@@ -9,6 +9,7 @@
 #define XNE_SOCKETS_BASIC_SOCKET_H
 
 #include <system_error>
+#include <functional>
 
 #include "xne/sockets/socket_base.h"
 #include "xne/sockets/socket_syscalls.h"
