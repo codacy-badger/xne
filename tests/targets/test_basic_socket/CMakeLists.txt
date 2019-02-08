@@ -9,8 +9,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 if(DEFINED ${CMAKE_BUILD_TYPE} AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_compile_options(${PROJECT_NAME} PRIVATE
         -ggdb -O0)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-        XNE_DBG_MODE)
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC

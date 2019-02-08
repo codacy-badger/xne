@@ -9,7 +9,7 @@
 #include <iostream>
 #include <functional>
 
-#include "xne/protocols/local/tcp.h"
+#include "xne/domains/local/tcp.h"
 #include "xne/sockets/basic_socket.h"
 
 #include "test.h"
