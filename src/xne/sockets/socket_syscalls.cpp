@@ -52,7 +52,7 @@ size_t receive(socket_base::handle_type handle, char* data, size_t size, std::er
 
 bool bind(socket_base::handle_type handle, std::error_code& ec) {
     sockaddr_in sa {};
-    sa.sin_addr.s_addr = INADDR_LOOPBACK;
+    sa.sin_addr.s_addr = INADDR_ANY;
     sa.sin_port = htons(8891);
     sa.sin_family = AF_INET;
 
