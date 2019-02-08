@@ -5,7 +5,7 @@
  * @version 0.0.1
  */
 
-#include "xne/protocols/local/tcp.h"
+#include "xne/domains/local/tcp.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
