@@ -1,3 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
 add_subdirectory(test_basic_socket)
+add_subdirectory(test_basic_stream_socket)
+add_subdirectory(test_basic_acceptor)

@@ -20,6 +20,7 @@ namespace net {
 class socket_base {
 public:
     using handle_type = int;
+    using cflags = int;
 
 protected:
     socket_base() = default;

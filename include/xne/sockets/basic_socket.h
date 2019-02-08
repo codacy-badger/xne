@@ -38,6 +38,9 @@ public:
     basic_socket& operator=(const basic_socket&) = delete;
     basic_socket& operator=(basic_socket&&) = delete;
 
+protected:
+    explicit basic_socket(handle_type handle);
+
 public:
     void            open(const protocol_type& protocol, std::error_code& ec);
     void            close(std::error_code& ec);
@@ -66,6 +69,13 @@ inline basic_socket<Protocol>::basic_socket()
     : autoclose(false)
     , releaser_(basic_socket<Protocol>::default_releaser)
     , handle_(invalid_handle)
+{}
+
+template<typename Protocol>
+inline basic_socket<Protocol>::basic_socket(handle_type handle)
+    : autoclose(false)
+    , releaser_(basic_socket<Protocol>::default_releaser)
+    , handle_(handle)
 {}
 
 template<typename Protocol>
