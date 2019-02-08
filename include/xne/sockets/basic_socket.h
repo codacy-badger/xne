@@ -16,6 +16,13 @@
 namespace xne {
 namespace net {
 
+/**
+ * @class   basic_socket basic_socket.h "include/xne/sockets/basic_socket.h"
+ * @brief   A class that forms a base for all sockets.
+ * @tparam  Protocol    Specifies a particular network protocol to be used
+ *                      with socket.
+ */
+
 template<typename Protocol>
 class basic_socket : public socket_base {
 public:
