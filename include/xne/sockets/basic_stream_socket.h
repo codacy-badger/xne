@@ -29,10 +29,11 @@ public:
 
 public:
     basic_stream_socket() = default;
+    basic_stream_socket(basic_stream_socket&&) noexcept = default;
 
     basic_stream_socket(const basic_stream_socket&) = delete;
-    basic_stream_socket& operator==(const basic_stream_socket&) = delete;
-    basic_stream_socket& operator==(basic_stream_socket&&) = delete;
+    basic_stream_socket& operator=(const basic_stream_socket&) = delete;
+    basic_stream_socket& operator=(basic_stream_socket&&) = delete;
 
 protected:
     explicit basic_stream_socket(socket_base::handle_type handle);

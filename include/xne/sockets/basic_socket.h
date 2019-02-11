@@ -10,6 +10,7 @@
 
 #include <system_error>
 #include <functional>
+#include <utility>
 
 #include "xne/sockets/socket_base.h"
 #include "xne/sockets/socket_syscalls.h"
@@ -32,6 +33,7 @@ public:
 
 public:
     basic_socket();
+    basic_socket(basic_socket&& other_socket) noexcept;
     virtual ~basic_socket();
 
     basic_socket(const basic_socket&) = delete;
@@ -69,6 +71,13 @@ inline basic_socket<Protocol>::basic_socket()
     : autoclose(false)
     , releaser_(basic_socket<Protocol>::default_releaser)
     , handle_(invalid_handle)
+{}
+
+template<typename Protocol>
+inline basic_socket<Protocol>::basic_socket(basic_socket&& other_socket) noexcept
+    : autoclose(std::exchange(other_socket.autoclose, false))
+    , handle_(std::exchange(other_socket.handle_, invalid_handle))
+    , releaser_(std::exchange(other_socket.releaser_, nullptr))
 {}
 
 template<typename Protocol>

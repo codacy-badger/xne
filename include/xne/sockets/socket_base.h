@@ -24,6 +24,7 @@ public:
 
 protected:
     socket_base() = default;
+    socket_base(socket_base&&) = default;
    ~socket_base() = default;
 
 public:
