@@ -11,6 +11,12 @@
 namespace xne {
 namespace net {
 
+/**
+ * @class   basic_protocol basic_protocol.h "include/xne/core/basic_protocol.h"
+ * @brief   Defines the basic interface that should be implemented by any class
+ *          represents a networking protocol.
+ */
+
 class basic_protocol {
 public:
     virtual ~basic_protocol() = default;
