@@ -76,8 +76,8 @@ inline basic_socket<Protocol>::basic_socket()
 template<typename Protocol>
 inline basic_socket<Protocol>::basic_socket(basic_socket&& other_socket) noexcept
     : autoclose(std::exchange(other_socket.autoclose, false))
-    , handle_(std::exchange(other_socket.handle_, invalid_handle))
     , releaser_(std::exchange(other_socket.releaser_, nullptr))
+    , handle_(std::exchange(other_socket.handle_, invalid_handle))
 {}
 
 template<typename Protocol>

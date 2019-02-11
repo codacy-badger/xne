@@ -11,6 +11,7 @@
 #include <cstring>
 
 #include "xne/sockets/basic_acceptor.h"
+#include "xne/sockets/basic_connector.h"
 #include "xne/domains/inet/tcp.h"
 #include "xne/io/basic_buffer_view.h"
 
@@ -31,8 +32,8 @@ public:
 
 class buffer_view : public net::basic_buffer_view {
 public:
-    explicit buffer_view(char* str)
-        : net::basic_buffer_view(str, std::strlen(str))
+    explicit buffer_view(char* str, size_t size)
+        : net::basic_buffer_view(str, size)
     {}
 
 public:
@@ -48,8 +49,8 @@ int main() {
 }
 
 bool case_basic_acceptor_operations() {
-    char* data = "You in Matrix...";
-    buffer_view view { data };
+    char data[] = "You in Matrix...";
+    buffer_view view { data, std::strlen(data) };
     const auto protocol = net::inet::tcp();
     using socket_t = decltype(protocol)::socket_type;
     socket_t socket {};
@@ -58,6 +59,22 @@ bool case_basic_acceptor_operations() {
     auto acceptor = net::basic_acceptor(protocol, &socket);
     acceptor.bind(ec);
     acceptor.listen(100, ec);
+
+    std::thread sender_thread { [&protocol, &view](){
+        using connector_t = net::basic_connector<decltype(protocol)>;
+        std::error_code cli_err;
+        socket_t cli_socket;
+        cli_socket.open(protocol, cli_err);
+        connector_t connector { protocol, std::move(cli_socket) };
+        connector.connect(cli_err);
+        connector.socket().send(view, cli_err);
+        std::this_thread::sleep_for(5s);
+        char buf[256];
+        buffer_view rcv_buf { buf, 256 };
+        connector.socket().receive(rcv_buf, cli_err);
+        std::cout << "[client] recv_data: " << (char*)rcv_buf.data() << std::endl;
+    }};
+
     while (true) {
         const auto client_handle = acceptor.accept(ec);
         if (client_handle > 0) {
@@ -69,6 +86,10 @@ bool case_basic_acceptor_operations() {
         std::cout << "sleep for 3 seconds..." << std::endl;
         std::this_thread::sleep_for(3s);
     }
+
+    if (sender_thread.joinable())
+        sender_thread.join();
+
     socket.close();
     return true;
 }

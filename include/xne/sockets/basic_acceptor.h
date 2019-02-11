@@ -25,6 +25,11 @@ public:
     basic_acceptor(const protocol_type& proto, socket_type* socket);
     virtual ~basic_acceptor() = default;
 
+    basic_acceptor(const basic_acceptor&) = delete;
+    basic_acceptor(basic_acceptor&&) = delete;
+    basic_acceptor& operator=(const basic_acceptor&) = delete;
+    basic_acceptor& operator=(basic_acceptor&&) = delete;
+
 public:
     bool bind(std::error_code& ec);
     socket_base::handle_type accept(std::error_code& ec);
