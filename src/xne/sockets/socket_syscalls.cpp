@@ -32,7 +32,7 @@ void close(socket_base::handle_type& handle, std::error_code* ec) {
     }
 }
 
-size_t send(socket_base::handle_type handle, const char* data, size_t size, std::error_code& ec, socket_base::cflags flags) {
+size_t send(socket_base::handle_type handle, const char* data, size_t size, std::error_code& ec, socket_flags_t flags) {
     ssize_t bytes_sent = 0;
     if ((bytes_sent = ::send(handle, data ,size, static_cast<int>(flags))) < 0) {
         ec.assign(errno, std::system_category());
@@ -41,7 +41,7 @@ size_t send(socket_base::handle_type handle, const char* data, size_t size, std:
     return static_cast<size_t>(bytes_sent);
 }
 
-size_t receive(socket_base::handle_type handle, char* data, size_t size, std::error_code& ec, socket_base::cflags flags) {
+size_t receive(socket_base::handle_type handle, char* data, size_t size, std::error_code& ec, socket_flags_t flags) {
     ssize_t bytes_recv = 0;
     if ((bytes_recv = ::recv(handle, data, size, static_cast<int>(flags))) < 0) {
         ec.assign(errno, std::system_category());

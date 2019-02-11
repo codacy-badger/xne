@@ -25,7 +25,7 @@ namespace net {
 template<typename Protocol>
 class basic_stream_socket : public basic_socket<Protocol> {
 public:
-    using cflags = socket_base::cflags;
+    using flags_type = socket_base::flags_type;
 
 public:
     basic_stream_socket() = default;
@@ -39,8 +39,8 @@ protected:
     explicit basic_stream_socket(socket_base::handle_type handle);
 
 public:
-    size_t send(basic_buffer_view& buf, std::error_code& ec, cflags flags = 0);
-    size_t receive(basic_buffer_view& buf, std::error_code& ec, cflags flags = 0);
+    size_t send(basic_buffer_view& buf, std::error_code& ec, flags_type flags = 0);
+    size_t receive(basic_buffer_view& buf, std::error_code& ec, flags_type flags = 0);
 };
 
 template<typename Protocol>
@@ -49,7 +49,7 @@ basic_stream_socket<Protocol>::basic_stream_socket(socket_base::handle_type hand
 {}
 
 template<typename Protocol>
-inline size_t basic_stream_socket<Protocol>::send(basic_buffer_view& buf, std::error_code& ec, cflags flags) {
+inline size_t basic_stream_socket<Protocol>::send(basic_buffer_view& buf, std::error_code& ec, flags_type flags) {
     return syscall::send(this->native_handle()
         , static_cast<const char*>(buf.data())
         , buf.size()
@@ -58,7 +58,7 @@ inline size_t basic_stream_socket<Protocol>::send(basic_buffer_view& buf, std::e
 }
 
 template<typename Protocol>
-inline size_t basic_stream_socket<Protocol>::receive(basic_buffer_view& buf, std::error_code& ec, cflags flags) {
+inline size_t basic_stream_socket<Protocol>::receive(basic_buffer_view& buf, std::error_code& ec, flags_type flags) {
     return syscall::receive(this->native_handle()
         , static_cast<char*>(buf.data())
         , buf.size()
