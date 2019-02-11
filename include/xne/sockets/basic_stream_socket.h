@@ -25,6 +25,7 @@ namespace net {
 template<typename Protocol>
 class basic_stream_socket : public basic_socket<Protocol> {
 public:
+    using handle_type = socket_base::handle_type;
     using flags_type = socket_base::flags_type;
 
 public:
@@ -36,7 +37,7 @@ public:
     basic_stream_socket& operator=(basic_stream_socket&&) = delete;
 
 protected:
-    explicit basic_stream_socket(socket_base::handle_type handle);
+    explicit basic_stream_socket(handle_type handle);
 
 public:
     size_t send(basic_buffer_view& buf, std::error_code& ec, flags_type flags = 0);
@@ -44,7 +45,7 @@ public:
 };
 
 template<typename Protocol>
-basic_stream_socket<Protocol>::basic_stream_socket(socket_base::handle_type handle)
+basic_stream_socket<Protocol>::basic_stream_socket(handle_type handle)
     : basic_socket<Protocol>(handle)
 {}
 
