@@ -11,16 +11,24 @@
 #include <utility>
 #include <system_error>
 
-#include "xne/sockets/socket_syscalls.h"
-
 namespace xne {
 namespace net {
+
+/**
+ * @class   basic_connector basic_connector.h "include/xne/sockets/basic_connector.h"
+ * @tparam  Protocol    Specifies a particular network protocol to be used
+ *                      with socket.
+ * @brief   A class that forms a base for any class designed to make network
+ *          connections. Requires to implement method "connect" according to
+ *          type of the endpoint that defines by selected protocol.
+ */
 
 template<typename Protocol>
 class basic_connector {
 public:
     using protocol_type = Protocol;
-    using socket_type = typename Protocol::socket_type;
+    using socket_type = typename protocol_type::socket_type;
+    using endpoint_type = typename protocol_type::endpoint_type;
 
 public:
     basic_connector(const protocol_type& protocol, socket_type&& socket);
@@ -32,12 +40,12 @@ public:
     basic_connector& operator=(basic_connector&&) = delete;
 
 public:
-    bool connect(std::error_code& ec);
+    virtual bool connect(const endpoint_type& endpoint, const std::error_code& ec) = 0;
     socket_type& socket();
 
 protected:
-    protocol_type   protocol_;
-    socket_type     socket_;
+    protocol_type protocol_;
+    socket_type   socket_;
 };
 
 template<typename Protocol>
@@ -45,11 +53,6 @@ inline basic_connector<Protocol>::basic_connector(const protocol_type& protocol,
     : protocol_(protocol)
     , socket_(std::move(socket))
 {}
-
-template<typename Protocol>
-inline bool basic_connector<Protocol>::connect(std::error_code& ec) {
-    return syscall::connect(socket_.native_handle(), ec);
-}
 
 template<typename Protocol>
 inline typename basic_connector<Protocol>::socket_type& basic_connector<Protocol>::socket() {
