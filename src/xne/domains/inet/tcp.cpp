@@ -28,7 +28,9 @@ int tcp::type() const noexcept {
 }
 
 int tcp::protocol() const noexcept {
-    return IPPROTO_TCP;
+    return (default_protocol_)
+        ? 0
+        : IPPROTO_TCP;
 }
 
 } // namespace inet
