@@ -17,8 +17,7 @@ address_base::address_base()
     : address_bytes_(nullptr)
 {}
 
-address_base& address_base::operator=(const address_base& other) {
-    address_bytes_ = other.address_bytes_;
+address_base& address_base::operator=(const address_base&) {
     return *this;
 }
 

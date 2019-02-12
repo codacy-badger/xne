@@ -22,9 +22,10 @@ public:
 
 public:
     explicit address(const protocol_type& protocol);
+    address(const address& other_address);
     virtual ~address();
 
-    address(const address&) = delete;
+
     address(address&&) = delete;
     address& operator=(const address&) = delete;
     address& operator=(address&&) = delete;
@@ -37,7 +38,7 @@ public:
     const address_v4<protocol_type>& to_v4() const noexcept;
     const address_v6<protocol_type>& to_v6() const noexcept;
 
-    static void make_address(const protocol_type& protocol, const std::string& str);
+    static address make_address(const protocol_type& protocol, const std::string& str);
 
 protected:
     void init(const byte* data) override;
@@ -55,6 +56,16 @@ inline address<InetProtocol>::address(const protocol_type& protocol)
 
 {
     init(nullptr);
+}
+
+template<typename InetProtocol>
+address<InetProtocol>::address(const address& other_address)
+    : basic_address<protocol_type>(other_address.protocol_)
+    , address_v4<protocol_type>(other_address.protocol_)
+    , address_v6<protocol_type>(other_address.protocol_)
+    , protocol_(other_address.protocol_)
+{
+    this->init(other_address.address_bytes_);
 }
 
 template<typename InetProtocol>
@@ -102,9 +113,10 @@ inline void address<InetProtocol>::init(const byte* data) {
 }
 
 template<typename InetProtocol>
-void address<InetProtocol>::make_address(const protocol_type& protocol, const std::string& str) {
+address<InetProtocol> address<InetProtocol>::make_address(const protocol_type& protocol, const std::string& str) {
     address new_address { protocol };
     inet_utils::presentation_to_network_address(protocol, str, new_address);
+    return new_address;
 }
 
 } // namespace inet

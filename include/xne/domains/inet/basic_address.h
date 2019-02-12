@@ -30,7 +30,7 @@ public:
 
 protected:
     explicit basic_address(const protocol_type& protocol);
-    basic_address& operator=(const basic_address&) = default;
+    basic_address& operator=(const basic_address&);
     ~basic_address() override = default;
 
 public:
@@ -56,10 +56,16 @@ inline const InetProtocol& basic_address<InetProtocol>::protocol() const noexcep
 }
 
 template<typename InetProtocol>
-std::string basic_address<InetProtocol>::as_string() const noexcept {
+inline std::string basic_address<InetProtocol>::as_string() const noexcept {
     std::string ip_address;
     inet_utils::network_address_to_presentation(protocol_, ip_address, *this);
     return ip_address;
+}
+
+template<typename InetProtocol>
+inline basic_address<InetProtocol>& basic_address<InetProtocol>::operator=(const basic_address& other_address) {
+    this->protocol_ = other_address.protocol_;
+    return *this;
 }
 
 } // namespace inet
