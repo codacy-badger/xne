@@ -11,7 +11,7 @@
 namespace xne {
 namespace net {
 
-using byte_t = unsigned char;
+using byte = unsigned char;
 
 } // namespace net
 } // namespace xne
