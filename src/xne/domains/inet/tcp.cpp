@@ -11,18 +11,16 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-namespace xne {
-namespace net {
+#define AF_INET4 (AF_INET)
+
+namespace  xne {
+namespace  net {
 namespace inet {
 
-tcp::tcp(bool v6)
-    : is_v6_(v6)
-{}
-
 int tcp::family() const noexcept {
-    return (is_v6_)
+    return (protocol_version::v6 == version_)
         ? AF_INET6
-        : AF_INET;
+        : AF_INET4;
 }
 
 int tcp::type() const noexcept {
@@ -33,6 +31,6 @@ int tcp::protocol() const noexcept {
     return IPPROTO_TCP;
 }
 
-} // inet
-} // net
-} // xne
+} // namespace inet
+} // namespace net
+} // namespace xne
