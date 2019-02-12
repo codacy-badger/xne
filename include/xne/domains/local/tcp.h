@@ -5,8 +5,8 @@
  * @version 0.0.1
  */
 
-#ifndef XNE_PROTOCOLS_LOCAL_TCP_H
-#define XNE_PROTOCOLS_LOCAL_TCP_H
+#ifndef XNE_DOMAINS_LOCAL_TCP_H
+#define XNE_DOMAINS_LOCAL_TCP_H
 
 #include "xne/core/basic_protocol.h"
 
@@ -28,4 +28,4 @@ public:
 } // namespace net
 } // namespace xne
 
-#endif  // XNE_PROTOCOLS_LOCAL_TCP_H
+#endif  // XNE_DOMAINS_LOCAL_TCP_H

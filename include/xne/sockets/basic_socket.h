@@ -9,12 +9,21 @@
 #define XNE_SOCKETS_BASIC_SOCKET_H
 
 #include <system_error>
+#include <functional>
+#include <utility>
 
 #include "xne/sockets/socket_base.h"
 #include "xne/sockets/socket_syscalls.h"
 
 namespace xne {
 namespace net {
+
+/**
+ * @class   basic_socket basic_socket.h "include/xne/sockets/basic_socket.h"
+ * @brief   A class that forms a base for all sockets.
+ * @tparam  Protocol    Specifies a particular network protocol to be used
+ *                      with socket.
+ */
 
 template<typename Protocol>
 class basic_socket : public socket_base {
@@ -24,11 +33,15 @@ public:
 
 public:
     basic_socket();
+    basic_socket(basic_socket&& other_socket) noexcept;
     virtual ~basic_socket();
 
     basic_socket(const basic_socket&) = delete;
     basic_socket& operator=(const basic_socket&) = delete;
     basic_socket& operator=(basic_socket&&) = delete;
+
+protected:
+    explicit basic_socket(handle_type handle);
 
 public:
     void            open(const protocol_type& protocol, std::error_code& ec);
@@ -58,6 +71,20 @@ inline basic_socket<Protocol>::basic_socket()
     : autoclose(false)
     , releaser_(basic_socket<Protocol>::default_releaser)
     , handle_(invalid_handle)
+{}
+
+template<typename Protocol>
+inline basic_socket<Protocol>::basic_socket(basic_socket&& other_socket) noexcept
+    : autoclose(std::exchange(other_socket.autoclose, false))
+    , releaser_(std::exchange(other_socket.releaser_, nullptr))
+    , handle_(std::exchange(other_socket.handle_, invalid_handle))
+{}
+
+template<typename Protocol>
+inline basic_socket<Protocol>::basic_socket(handle_type handle)
+    : autoclose(false)
+    , releaser_(basic_socket<Protocol>::default_releaser)
+    , handle_(handle)
 {}
 
 template<typename Protocol>
