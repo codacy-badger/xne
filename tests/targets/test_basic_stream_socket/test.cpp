@@ -24,7 +24,7 @@ int main() {
 }
 
 bool case_basic_stream_socket_operations() {
-    const auto protocol = net::inet::tcp(true);
+    const auto protocol = net::inet::tcp(net::inet::protocol_version::v4);
     using socket_type = decltype(protocol)::socket_type;
     std::error_code ec;
     socket_type socket;
