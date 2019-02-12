@@ -9,8 +9,9 @@
 #define XNE_DOMAINS_INET_ADDRESS_V4_H
 
 #include <array>
+#include <cstring>
 
-#include "xne/core/types.h"
+#include "xne/domains/inet/basic_address.h"
 
 namespace  xne {
 namespace  net {
@@ -21,22 +22,40 @@ namespace inet {
  * @brief   IP address version 4.
  */
 
-class address_v4 {
-public:
-    using bytes_type = std::array<byte_t, 4>;
+template<typename InetProtocol>
+class address_v4 : public virtual basic_address<InetProtocol> {
+private:
+    enum { ipv4_size = 4 };
+
+private:
+    using super = basic_address<InetProtocol>;
+    using protocol_type = InetProtocol;
+    using bytes_type = std::array<byte, ipv4_size>;
 
 public:
-    address_v4();
-    explicit address_v4(const bytes_type& address_bytes);
-    address_v4& operator=(const address_v4& address) = default;
-
-public:
-    static address_v4 make_address(const char* str);
-    const bytes_type& to_bytes() const noexcept;
+    explicit address_v4(const protocol_type& protocol);
 
 protected:
-    bytes_type address_bytes_;
+    ~address_v4() = default;
+
+protected:
+    void allocate() override;
+
+private:
+    static constexpr bytes_type any_address = { 0, 0, 0, 0 };
+    static constexpr bytes_type loopback_address = { 127, 0, 0, 1 };
 };
+
+template<typename InetProtocol>
+inline address_v4<InetProtocol>::address_v4(const protocol_type& protocol)
+    : super(protocol)
+{}
+
+template<typename InetProtocol>
+inline void address_v4<InetProtocol>::allocate() {
+    this->address_bytes_ = new byte[ipv4_size];
+    std::memcpy(this->address_bytes_, any_address.data(), ipv4_size);
+}
 
 } // namespace inet
 } // namespace net
