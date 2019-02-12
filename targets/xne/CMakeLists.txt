@@ -24,6 +24,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     # networking::domains::local (unix)
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/local/tcp.cpp
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/tcp.cpp
+    ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/address_v4.cpp
+    ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/address_v6.cpp
     # networking::io
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/io/basic_buffer_view.cpp
     # networking::sockets
