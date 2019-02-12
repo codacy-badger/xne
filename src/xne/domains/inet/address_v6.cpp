@@ -15,6 +15,10 @@ namespace  xne {
 namespace  net {
 namespace inet {
 
+#ifndef in6_addr_t
+using in6_addr_t = in6_addr;
+#endif  // in6_addr_t
+
 address_v6::address_v6()
     : address_bytes_()
 {
