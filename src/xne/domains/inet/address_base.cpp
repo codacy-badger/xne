@@ -7,6 +7,8 @@
 
 #include "xne/domains/inet/address_base.h"
 
+#include <utility>
+
 namespace  xne {
 namespace  net {
 namespace inet {
@@ -14,6 +16,11 @@ namespace inet {
 address_base::address_base()
     : address_bytes_(nullptr)
 {}
+
+address_base& address_base::operator=(const address_base& other) {
+    address_bytes_ = other.address_bytes_;
+    return *this;
+}
 
 const byte* address_base::to_bytes() const noexcept {
     return address_bytes_;

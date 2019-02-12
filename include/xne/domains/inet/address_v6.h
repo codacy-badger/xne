@@ -30,6 +30,8 @@ private:
 private:
     using super = basic_address<InetProtocol>;
     using protocol_type = InetProtocol;
+
+protected:
     using bytes_type = std::array<byte, ipv6_size>;
 
 public:
@@ -39,7 +41,7 @@ protected:
     ~address_v6() = default;
 
 protected:
-    void allocate() override;
+    void init(const byte* data) override;
 
 private:
     static constexpr bytes_type any_address = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -51,9 +53,12 @@ inline address_v6<InetProtocol>::address_v6(const protocol_type& protocol)
 {}
 
 template<typename InetProtocol>
-void address_v6<InetProtocol>::allocate() {
+void address_v6<InetProtocol>::init(const byte* data) {
     this->address_bytes_ = new byte[ipv6_size];
-    std::memcpy(this->address_bytes_, any_address.data(), ipv6_size);
+    const byte* src_data = (data)
+        ? data
+        : any_address.data();
+    std::memcpy(this->address_bytes_, src_data, ipv6_size);
 }
 
 } // namespace inet

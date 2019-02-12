@@ -30,11 +30,11 @@ public:
 
     address_base(const address_base&) = delete;
     address_base(address_base&&) = delete;
-    address_base& operator=(const address_base&) = delete;
     address_base& operator=(address_base&&) = delete;
 
 protected:
     address_base();
+    address_base& operator=(const address_base&);
 
 public:
     const byte* to_bytes() const noexcept;

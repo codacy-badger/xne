@@ -24,12 +24,23 @@ public:
     explicit address(const protocol_type& protocol);
     virtual ~address();
 
+    address(const address&) = delete;
+    address(address&&) = delete;
+    address& operator=(const address&) = delete;
+    address& operator=(address&&) = delete;
+
+protected:
+    address(const protocol_type& protocol, const typename address_v4<protocol_type>::bytes_type& address_bytes);
+    address(const protocol_type& protocol, const typename address_v6<protocol_type>::bytes_type& address_bytes);
+
 public:
     const address_v4<protocol_type>& to_v4() const noexcept;
     const address_v6<protocol_type>& to_v6() const noexcept;
 
+    static void make_address(const protocol_type& protocol, const std::string& str);
+
 protected:
-    void allocate() override;
+    void init(const byte* data) override;
 
 protected:
     protocol_type protocol_;
@@ -42,8 +53,28 @@ inline address<InetProtocol>::address(const protocol_type& protocol)
     , address_v6<protocol_type>(protocol)
     , protocol_(protocol)
 
-    {
-    allocate();
+{
+    init(nullptr);
+}
+
+template<typename InetProtocol>
+inline address<InetProtocol>::address(const protocol_type& protocol, const typename address_v4<InetProtocol>::bytes_type& address_bytes)
+    : basic_address<protocol_type>(protocol)
+    , address_v4<protocol_type>(protocol)
+    , address_v6<protocol_type>(protocol)
+    , protocol_(protocol)
+{
+    init(address_bytes.data());
+}
+
+template<typename InetProtocol>
+inline address<InetProtocol>::address(const protocol_type& protocol, const typename address_v6<InetProtocol>::bytes_type& address_bytes)
+    : basic_address<protocol_type>(protocol)
+    , address_v4<protocol_type>(protocol)
+    , address_v6<protocol_type>(protocol)
+    , protocol_(protocol)
+{
+    allocate(address_bytes.data());
 }
 
 template<typename InetProtocol>
@@ -63,11 +94,17 @@ inline const address_v6<InetProtocol>& address<InetProtocol>::to_v6() const noex
 }
 
 template<typename InetProtocol>
-inline void address<InetProtocol>::allocate() {
+inline void address<InetProtocol>::init(const byte* data) {
     if (protocol_version::v4 == protocol_.version())
-        address_v4<protocol_type>::allocate();
+        address_v4<protocol_type>::init(data);
     else
-        address_v6<protocol_type>::allocate();
+        address_v6<protocol_type>::init(data);
+}
+
+template<typename InetProtocol>
+void address<InetProtocol>::make_address(const protocol_type& protocol, const std::string& str) {
+    address new_address { protocol };
+    inet_utils::presentation_to_network_address(protocol, str, new_address);
 }
 
 } // namespace inet

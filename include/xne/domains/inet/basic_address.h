@@ -26,19 +26,19 @@ public:
 public:
     basic_address(const basic_address&) = delete;
     basic_address(basic_address&&) = delete;
-    basic_address& operator=(const basic_address&) = delete;
     basic_address& operator=(basic_address&&) = delete;
 
 protected:
     explicit basic_address(const protocol_type& protocol);
-    ~basic_address() = default;
+    basic_address& operator=(const basic_address&) = default;
+    ~basic_address() override = default;
 
 public:
     const protocol_type& protocol() const noexcept;
     std::string as_string() const noexcept;
 
 protected:
-    virtual void allocate() = 0;
+    virtual void init(const byte* data) = 0;
 
 protected:
     protocol_type protocol_;

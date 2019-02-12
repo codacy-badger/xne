@@ -30,6 +30,8 @@ private:
 private:
     using super = basic_address<InetProtocol>;
     using protocol_type = InetProtocol;
+
+protected:
     using bytes_type = std::array<byte, ipv4_size>;
 
 public:
@@ -39,7 +41,7 @@ protected:
     ~address_v4() = default;
 
 protected:
-    void allocate() override;
+    void init(const byte* data) override;
 
 private:
     static constexpr bytes_type any_address = { 0, 0, 0, 0 };
@@ -52,9 +54,12 @@ inline address_v4<InetProtocol>::address_v4(const protocol_type& protocol)
 {}
 
 template<typename InetProtocol>
-inline void address_v4<InetProtocol>::allocate() {
+inline void address_v4<InetProtocol>::init(const byte* data) {
     this->address_bytes_ = new byte[ipv4_size];
-    std::memcpy(this->address_bytes_, any_address.data(), ipv4_size);
+    const byte* src_data = (data)
+        ? data
+        : any_address.data();
+    std::memcpy(this->address_bytes_, src_data, ipv4_size);
 }
 
 } // namespace inet
