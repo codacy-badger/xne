@@ -1,22 +1,26 @@
 /**
  * @file    tcp.cpp
  * @author  isnullxbh
- * @date    2019-01-16 14:08
+ * @date    2019-02-08 13:38
  * @version 0.0.1
  */
 
-#include "xne/domains/local/tcp.h"
+#include "xne/domains/inet/tcp.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-namespace xne {
-namespace net {
-namespace local {
+#define AF_INET4 (AF_INET)
+
+namespace  xne {
+namespace  net {
+namespace inet {
 
 int tcp::family() const noexcept {
-    return AF_LOCAL;
+    return (protocol_version::v6 == version_)
+        ? AF_INET6
+        : AF_INET4;
 }
 
 int tcp::type() const noexcept {
@@ -24,9 +28,9 @@ int tcp::type() const noexcept {
 }
 
 int tcp::protocol() const noexcept {
-    return 0;
+    return IPPROTO_TCP;
 }
 
-} // namespace local
+} // namespace inet
 } // namespace net
 } // namespace xne

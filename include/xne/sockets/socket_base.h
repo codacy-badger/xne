@@ -11,13 +11,21 @@
 namespace xne {
 namespace net {
 
+/**
+ * @class   socket_base socket_base.h "include/xne/sockets/socket_base.h"
+ * @brief   A base class for all sockets. Provides a constants (related to
+ *          native sockets) that are common for all socket types.
+ */
+
 class socket_base {
 public:
     using handle_type = int;
+    using flags_type = int;
 
 protected:
     socket_base() = default;
-    ~socket_base() = default;
+    socket_base(socket_base&&) = default;
+   ~socket_base() = default;
 
 public:
     static const handle_type invalid_handle;

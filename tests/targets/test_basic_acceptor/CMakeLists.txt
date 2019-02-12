@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(test_basic_socket VERSION 0.0.1 LANGUAGES CXX)
+project(test_basic_acceptor VERSION 0.0.1 LANGUAGES CXX)
 
 add_executable(${PROJECT_NAME})
 

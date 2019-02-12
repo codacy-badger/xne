@@ -21,8 +21,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_sources(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/xne.cpp
-    # networking::protocols::local (unix)
+    # networking::domains::local (Unix)
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/local/tcp.cpp
+    # networking::domains::inet (InterNetwork)
+    ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/address_base.cpp
+    ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/tcp.cpp
+    ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/utility.cpp
+    # networking::io
+    ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/io/basic_buffer_view.cpp
     # networking::sockets
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/sockets/socket_base.cpp
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/sockets/socket_syscalls.cpp)
