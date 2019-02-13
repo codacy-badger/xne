@@ -40,7 +40,7 @@ public:
     basic_connector& operator=(basic_connector&&) = delete;
 
 public:
-    virtual bool connect(const endpoint_type& endpoint, const std::error_code& ec) = 0;
+    virtual bool connect(const endpoint_type& endpoint, std::error_code& ec) = 0;
     socket_type& socket();
 
 protected:
