@@ -12,5 +12,13 @@ namespace net {
 
 const socket_base::handle_type socket_base::invalid_handle = -1;
 
+bool socket_base::set_option(basic_socket_option& option, std::error_code& ec) {
+    return option.set(*this, ec);
+}
+
+bool socket_base::get_option(basic_socket_option& option, std::error_code& ec) {
+    return option.get(*this, ec);
+}
+
 } // namespace net
 } // namespace xne
