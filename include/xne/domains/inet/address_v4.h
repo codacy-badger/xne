@@ -24,7 +24,7 @@ namespace inet {
 
 template<typename InetProtocol>
 class address_v4 : public virtual basic_address<InetProtocol> {
-private:
+public:
     enum { ipv4_size = 4 };
 
 private:

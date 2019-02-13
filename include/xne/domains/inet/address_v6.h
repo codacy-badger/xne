@@ -24,7 +24,7 @@ namespace inet {
 
 template<typename InetProtocol>
 class address_v6 : public virtual basic_address<InetProtocol> {
-private:
+public:
     enum { ipv6_size = 16 };
 
 private:
