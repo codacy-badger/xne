@@ -47,7 +47,7 @@ public:
     void            open(const protocol_type& protocol, std::error_code& ec);
     void            close(std::error_code& ec);
     void            close();
-    handle_type     native_handle() const noexcept;
+    handle_type     native_handle() const noexcept override;
     bool            is_open() const noexcept;
 
 protected:

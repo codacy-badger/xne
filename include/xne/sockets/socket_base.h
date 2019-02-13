@@ -8,6 +8,8 @@
 #ifndef XNE_SOCKETS_SOCKET_BASE_H
 #define XNE_SOCKETS_SOCKET_BASE_H
 
+#include "xne/sockets/basic_socket_option.h"
+
 namespace xne {
 namespace net {
 
@@ -26,6 +28,11 @@ protected:
     socket_base() = default;
     socket_base(socket_base&&) = default;
    ~socket_base() = default;
+
+public:
+    virtual handle_type native_handle() const noexcept = 0;
+    virtual bool        set_option(basic_socket_option& option, std::error_code& ec);
+    virtual bool        get_option(basic_socket_option& option, std::error_code& ec);
 
 public:
     static const handle_type invalid_handle;
