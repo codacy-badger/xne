@@ -25,7 +25,6 @@ public:
     address(const address& other_address);
     virtual ~address();
 
-
     address(address&&) = delete;
     address& operator=(const address&) = delete;
     address& operator=(address&&) = delete;
@@ -38,13 +37,12 @@ public:
     const address_v4<protocol_type>& to_v4() const noexcept;
     const address_v6<protocol_type>& to_v6() const noexcept;
 
+    const protocol_type& protocol() const noexcept override;
+
     static address make_address(const protocol_type& protocol, const std::string& str);
 
 protected:
     void init(const byte* data) override;
-
-protected:
-    protocol_type protocol_;
 };
 
 template<typename InetProtocol>
@@ -52,7 +50,6 @@ inline address<InetProtocol>::address(const protocol_type& protocol)
     : basic_address<protocol_type>(protocol)
     , address_v4<protocol_type>(protocol)
     , address_v6<protocol_type>(protocol)
-    , protocol_(protocol)
 
 {
     init(nullptr);
@@ -63,7 +60,6 @@ address<InetProtocol>::address(const address& other_address)
     : basic_address<protocol_type>(other_address.protocol_)
     , address_v4<protocol_type>(other_address.protocol_)
     , address_v6<protocol_type>(other_address.protocol_)
-    , protocol_(other_address.protocol_)
 {
     this->init(other_address.address_bytes_);
 }
@@ -73,7 +69,6 @@ inline address<InetProtocol>::address(const protocol_type& protocol, const typen
     : basic_address<protocol_type>(protocol)
     , address_v4<protocol_type>(protocol)
     , address_v6<protocol_type>(protocol)
-    , protocol_(protocol)
 {
     init(address_bytes.data());
 }
@@ -83,7 +78,6 @@ inline address<InetProtocol>::address(const protocol_type& protocol, const typen
     : basic_address<protocol_type>(protocol)
     , address_v4<protocol_type>(protocol)
     , address_v6<protocol_type>(protocol)
-    , protocol_(protocol)
 {
     allocate(address_bytes.data());
 }
@@ -106,17 +100,22 @@ inline const address_v6<InetProtocol>& address<InetProtocol>::to_v6() const noex
 
 template<typename InetProtocol>
 inline void address<InetProtocol>::init(const byte* data) {
-    if (protocol_version::v4 == protocol_.version())
+    if (protocol_version::v4 == this->protocol_.version())
         address_v4<protocol_type>::init(data);
     else
         address_v6<protocol_type>::init(data);
 }
 
 template<typename InetProtocol>
-address<InetProtocol> address<InetProtocol>::make_address(const protocol_type& protocol, const std::string& str) {
+inline address<InetProtocol> address<InetProtocol>::make_address(const protocol_type& protocol, const std::string& str) {
     address new_address { protocol };
     inet_utils::presentation_to_network_address(protocol, str, new_address);
     return new_address;
+}
+
+template<typename InetProtocol>
+inline const InetProtocol& address<InetProtocol>::protocol() const noexcept {
+    return basic_address<protocol_type>::protocol();
 }
 
 } // namespace inet

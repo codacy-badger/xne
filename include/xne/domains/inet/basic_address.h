@@ -34,7 +34,7 @@ protected:
     ~basic_address() override = default;
 
 public:
-    const protocol_type& protocol() const noexcept;
+    virtual const protocol_type& protocol() const noexcept;
     std::string as_string() const noexcept;
 
 protected:
