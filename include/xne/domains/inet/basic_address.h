@@ -29,6 +29,7 @@ public:
     basic_address& operator=(basic_address&&) = delete;
 
 protected:
+    basic_address();
     explicit basic_address(const protocol_type& protocol);
     basic_address& operator=(const basic_address&);
     ~basic_address() override = default;
@@ -38,11 +39,14 @@ public:
     std::string as_string() const noexcept;
 
 protected:
-    virtual void init(const byte* data) = 0;
-
-protected:
     protocol_type protocol_;
 };
+
+template<typename InetProtocol>
+inline basic_address<InetProtocol>::basic_address()
+    : super()
+    , protocol_()
+{}
 
 template<typename InetProtocol>
 inline basic_address<InetProtocol>::basic_address(const protocol_type& protocol)
