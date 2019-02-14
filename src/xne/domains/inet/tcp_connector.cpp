@@ -14,8 +14,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include <iostream>
-
 namespace  xne {
 namespace  net {
 namespace inet {
@@ -31,12 +29,10 @@ bool tcp_connector::connect(const endpoint_type& endpoint, std::error_code& ec) 
             sockaddr_in sa {};
             std::memset(&sa, '\0', sizeof(sa));
             sa.sin_family = static_cast<decltype(sa.sin_family)>(protocol.family());
-            sa.sin_port = endpoint.port();
+            sa.sin_port = htons(endpoint.port());
             std::memcpy(&sa.sin_addr.s_addr
                 , endpoint.ip_address().to_v4().to_bytes()
-                , endpoint.ip_address().to_v4().ipv4_size);
-            std::string ip(::inet_ntoa(sa.sin_addr));
-            std::cout << "IP: " << ip << std::endl;
+                , address_v4<protocol_type>::length);
             if (::connect(socket_.native_handle(), reinterpret_cast<sockaddr*>(&sa), sizeof(sa)) < 0) {
                 ec.assign(errno, std::system_category());
                 return false;
@@ -48,10 +44,10 @@ bool tcp_connector::connect(const endpoint_type& endpoint, std::error_code& ec) 
             sockaddr_in6 sa {};
             std::memset(&sa, '\0', sizeof(sa));
             sa.sin6_family = static_cast<decltype(sa.sin6_family)>(protocol.family());
-            sa.sin6_port = endpoint.port();
+            sa.sin6_port = htons(endpoint.port());
             std::memcpy(&sa.sin6_addr
                 , endpoint.ip_address().to_v6().to_bytes()
-                , endpoint.ip_address().to_v6().ipv6_size);
+                , address_v6<protocol_type>::length);
             if (::connect(socket_.native_handle(), reinterpret_cast<sockaddr*>(&sa), sizeof(sa)) < 0) {
                 ec.assign(errno, std::system_category());
                 return false;
