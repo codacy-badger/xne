@@ -135,7 +135,7 @@ bool case_basic_acceptor_operations() {
             std::cout << "\npeer: ip=" << peer_address << ", port=" << peer_endpoint.port() << std::endl;
             client_socket cli_socket { client_handle };
             cli_socket.send(view, ec, 0);
-            cli_socket.close();
+            cli_socket.close(ec);
             break;
         }
         std::cout << "sleep for 3 seconds..." << std::endl;

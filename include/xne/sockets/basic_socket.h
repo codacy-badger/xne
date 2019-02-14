@@ -46,7 +46,6 @@ protected:
 public:
     void            open(const protocol_type& protocol, std::error_code& ec);
     void            close(std::error_code& ec);
-    void            close();
     handle_type     native_handle() const noexcept override;
     bool            is_open() const noexcept;
 
@@ -97,17 +96,12 @@ template<typename Protocol>
 inline void basic_socket<Protocol>::open(const protocol_type& protocol, std::error_code& ec) {
     if (invalid_handle != handle_)
         throw std::logic_error("socket already open");
-    handle_ = syscall::socket(protocol, &ec);
+    handle_ = syscall::socket(protocol, ec);
 }
 
 template<typename Protocol>
 inline void basic_socket<Protocol>::close(std::error_code& ec) {
-    syscall::close(handle_, &ec);
-}
-
-template<typename Protocol>
-inline void basic_socket<Protocol>::close() {
-    syscall::close(handle_, nullptr);
+    syscall::close(handle_, ec);
 }
 
 template<typename Protocol>
@@ -128,7 +122,8 @@ inline void basic_socket<Protocol>::default_releaser(basic_socket<Protocol>* sel
 template<typename Protocol>
 inline void basic_socket<Protocol>::try_autoclose() {
     if (autoclose && is_open()) {
-        close();
+        std::error_code ec;
+        close(ec);
     }
 }
 

@@ -73,7 +73,7 @@ int main() {
             if (auto bytes_read = socket.receive(buf_view, ec)) {
                 auto bytes_sent = socket.send(buf_view, ec);
                 std::clog << "bytes read: " << bytes_read << ", bytes sent: " << bytes_sent << std::endl;
-                socket.close();
+                socket.close(ec);
             }
         }
         std::this_thread::sleep_for(1s);
