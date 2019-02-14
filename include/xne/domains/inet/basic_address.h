@@ -36,7 +36,7 @@ protected:
 
 public:
     virtual const protocol_type& protocol() const noexcept;
-    std::string as_string() const noexcept;
+    virtual std::string as_string() const noexcept = 0;
 
 protected:
     protocol_type protocol_;
@@ -57,13 +57,6 @@ inline basic_address<InetProtocol>::basic_address(const protocol_type& protocol)
 template<typename InetProtocol>
 inline const InetProtocol& basic_address<InetProtocol>::protocol() const noexcept {
     return protocol_;
-}
-
-template<typename InetProtocol>
-inline std::string basic_address<InetProtocol>::as_string() const noexcept {
-    std::string ip_address;
-    inet_utils::network_address_to_presentation(protocol_, ip_address, *this);
-    return ip_address;
 }
 
 template<typename InetProtocol>

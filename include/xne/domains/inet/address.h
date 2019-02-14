@@ -35,6 +35,7 @@ public:
     const address_v6<protocol_type>& to_v6() const noexcept;
 
     const protocol_type& protocol() const noexcept override;
+    std::string as_string() const noexcept override;
 
     static address make_address(const protocol_type& protocol, const std::string& str);
 
@@ -123,6 +124,13 @@ inline address<InetProtocol> address<InetProtocol>::make_address(const protocol_
 template<typename InetProtocol>
 inline const InetProtocol& address<InetProtocol>::protocol() const noexcept {
     return basic_address<protocol_type>::protocol();
+}
+
+template<typename InetProtocol>
+inline std::string address<InetProtocol>::as_string() const noexcept {
+    std::string ip_address;
+    inet_utils::network_address_to_presentation(this->protocol_, ip_address, *this);
+    return ip_address;
 }
 
 } // namespace inet
