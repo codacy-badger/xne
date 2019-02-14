@@ -86,10 +86,6 @@ tcp_acceptor::handle_type tcp_acceptor::accept(endpoint_type& endpoint, std::err
         return socket_base::invalid_handle;
     }
 
-    std::string ip { buf.get() };
-
-    std::cout << "\nip: " << ip << std::endl;
-
     auto port = (AF_INET == domain)
             ? reinterpret_cast<sockaddr_in*>(&sa)->sin_port
             : reinterpret_cast<sockaddr_in6*>(&sa)->sin6_port;
