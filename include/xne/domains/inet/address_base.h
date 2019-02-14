@@ -40,6 +40,10 @@ public:
     const byte* to_bytes() const noexcept;
 
 protected:
+    virtual void init(const byte* address_bytes, size_t size) noexcept = 0;
+    virtual void release() noexcept = 0;
+
+protected:
     byte* address_bytes_;
 
     friend class utility;
