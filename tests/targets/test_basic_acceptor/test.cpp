@@ -9,7 +9,6 @@
 #include <thread>
 #include <chrono>
 #include <cstring>
-#include <csignal>
 
 #include "xne/sockets/basic_acceptor.h"
 #include "xne/sockets/socket_options.h"
@@ -21,6 +20,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <xne/domains/inet/tcp_acceptor.h>
 
 namespace net = xne::net;
 using namespace std::chrono_literals;
@@ -54,13 +54,11 @@ int main() {
 }
 
 bool case_basic_acceptor_operations() {
-
-    std::signal(SIGPIPE, SIG_IGN);
-
     char data[] = "You in Matrix...";
     buffer_view view { data, std::strlen(data) };
     const auto protocol = net::inet::tcp();
     using socket_t = decltype(protocol)::socket_type;
+    using endpoint_t = net::inet::tcp::endpoint_type;
     socket_t socket {};
     std::error_code ec;
     socket.open(protocol, ec);
@@ -68,8 +66,18 @@ bool case_basic_acceptor_operations() {
         std::cerr << "[err] " << ec.message() << std::endl;
         ec.clear();
     }
-    auto acceptor = net::basic_acceptor(protocol, &socket);
-    acceptor.bind(ec);
+
+    auto host_endpoint = endpoint_t::make_endpoint("192.168.0.102", 8182);
+
+    const auto host_address =
+        net::inet::protocol_version::v4 == host_endpoint.ip_address().protocol().version()
+            ? host_endpoint.ip_address().to_v4().as_string()
+            : host_endpoint.ip_address().to_v6().as_string();
+
+    std::cout << "\nhost: ip=" << host_address << ", port=" << host_endpoint.port() << std::endl;
+
+    auto acceptor = net::inet::tcp_acceptor(protocol, std::move(socket));
+    acceptor.bind(host_endpoint, ec);
     if (ec) {
         std::cerr << "[err] " << ec.message() << std::endl;
         ec.clear();
@@ -80,10 +88,8 @@ bool case_basic_acceptor_operations() {
         ec.clear();
     }
 
-    std::thread sender_thread { [&protocol, &view](){
+    std::thread sender_thread { [&protocol, &view, &host_endpoint](){
         using connector_t = net::inet::tcp_connector;
-        using address_t = net::inet::address<net::inet::tcp>;
-        using endpoint_t = net::inet::tcp::endpoint_type;
         std::error_code cli_err;
         socket_t cli_socket;
 
@@ -100,11 +106,11 @@ bool case_basic_acceptor_operations() {
             cli_err.clear();
         }
 
-        address_t srv_address = address_t::make_address(protocol, "127.0.0.1");
-
         connector_t connector { protocol, std::move(cli_socket) };
-        endpoint_t ep { srv_address, 8891 };
-        connector.connect(ep, cli_err);
+
+//        std::this_thread::sleep_for(5s);
+
+        connector.connect(host_endpoint, cli_err);
         if (cli_err) {
             std::cerr << "[err] " << cli_err.message() << std::endl;
             cli_err.clear();
@@ -118,8 +124,15 @@ bool case_basic_acceptor_operations() {
     }};
 
     while (true) {
-        const auto client_handle = acceptor.accept(ec);
+        endpoint_t peer_endpoint;
+        const auto client_handle = acceptor.accept(peer_endpoint, ec);
         if (client_handle > 0) {
+            const auto peer_address =
+                net::inet::protocol_version::v4 == peer_endpoint.ip_address().protocol().version()
+                    ? peer_endpoint.ip_address().to_v4().as_string()
+                    : peer_endpoint.ip_address().to_v6().as_string();
+
+            std::cout << "\npeer: ip=" << peer_address << ", port=" << peer_endpoint.port() << std::endl;
             client_socket cli_socket { client_handle };
             cli_socket.send(view, ec, 0);
             cli_socket.close();
@@ -132,6 +145,5 @@ bool case_basic_acceptor_operations() {
     if (sender_thread.joinable())
         sender_thread.join();
 
-    socket.close();
     return true;
 }

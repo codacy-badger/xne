@@ -26,6 +26,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     # networking::domains::inet (InterNetwork)
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/address_base.cpp
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/tcp.cpp
+    ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/tcp_acceptor.cpp
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/tcp_connector.cpp
     ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/domains/inet/utility.cpp
     # networking::io
