@@ -10,6 +10,7 @@
 
 #include <array>
 #include <cstring>
+#include <cassert>
 
 #include "xne/domains/inet/basic_address.h"
 
@@ -25,23 +26,24 @@ namespace inet {
 template<typename InetProtocol>
 class address_v4 : public virtual basic_address<InetProtocol> {
 public:
-    enum { ipv4_size = 4 };
+    static constexpr size_t length = 4;
 
 private:
     using super = basic_address<InetProtocol>;
     using protocol_type = InetProtocol;
 
 protected:
-    using bytes_type = std::array<byte, ipv4_size>;
+    using bytes_type = std::array<byte, length>;
 
 public:
     explicit address_v4(const protocol_type& protocol);
 
 protected:
-    ~address_v4() = default;
+    address_v4();
+   ~address_v4() = default;
 
 protected:
-    void init(const byte* data) override;
+    void init(const byte* address_bytes, size_t size) noexcept override;
 
 private:
     static constexpr bytes_type any_address = { 0, 0, 0, 0 };
@@ -54,12 +56,20 @@ inline address_v4<InetProtocol>::address_v4(const protocol_type& protocol)
 {}
 
 template<typename InetProtocol>
-inline void address_v4<InetProtocol>::init(const byte* data) {
-    this->address_bytes_ = new byte[ipv4_size];
-    const byte* src_data = (data)
-        ? data
-        : any_address.data();
-    std::memcpy(this->address_bytes_, src_data, ipv4_size);
+inline address_v4<InetProtocol>::address_v4()
+    : super()
+{
+    if (protocol_version::v4 == this->protocol().version()) {
+        assert(!this->address_bytes_);
+        init(any_address.data(), any_address.size());
+    }
+}
+
+template<typename InetProtocol>
+inline void address_v4<InetProtocol>::init(const byte* address_bytes, size_t size) noexcept {
+    assert(size <= length && !this->address_bytes_);
+    this->address_bytes_ = new byte[length];
+    std::memcpy(this->address_bytes_, address_bytes, size);
 }
 
 } // namespace inet

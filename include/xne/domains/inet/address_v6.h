@@ -10,6 +10,7 @@
 
 #include <array>
 #include <cstring>
+#include <cassert>
 
 #include "xne/domains/inet/basic_address.h"
 
@@ -25,23 +26,24 @@ namespace inet {
 template<typename InetProtocol>
 class address_v6 : public virtual basic_address<InetProtocol> {
 public:
-    enum { ipv6_size = 16 };
+    static constexpr size_t length = 16;
 
 private:
     using super = basic_address<InetProtocol>;
     using protocol_type = InetProtocol;
 
 protected:
-    using bytes_type = std::array<byte, ipv6_size>;
+    using bytes_type = std::array<byte, length>;
 
 public:
     explicit address_v6(const protocol_type& protocol);
 
 protected:
-    ~address_v6() = default;
+    address_v6();
+   ~address_v6() = default;
 
 protected:
-    void init(const byte* data) override;
+    void init(const byte* address_bytes, size_t size) noexcept override;
 
 private:
     static constexpr bytes_type any_address = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -53,12 +55,20 @@ inline address_v6<InetProtocol>::address_v6(const protocol_type& protocol)
 {}
 
 template<typename InetProtocol>
-void address_v6<InetProtocol>::init(const byte* data) {
-    this->address_bytes_ = new byte[ipv6_size];
-    const byte* src_data = (data)
-        ? data
-        : any_address.data();
-    std::memcpy(this->address_bytes_, src_data, ipv6_size);
+address_v6<InetProtocol>::address_v6()
+    : super()
+{
+    if (protocol_version::v6 == this->protocol().version()) {
+        assert(!this->address_bytes_);
+        init(any_address.data(), any_address.size());
+    }
+}
+
+template<typename InetProtocol>
+void address_v6<InetProtocol>::init(const byte* address_bytes, size_t size) noexcept {
+    assert(size <= length && !this->address_bytes_);
+    this->address_bytes_ = new byte[length];
+    std::memcpy(this->address_bytes_, address_bytes, size);
 }
 
 } // namespace inet
