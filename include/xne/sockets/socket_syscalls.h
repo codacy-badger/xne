@@ -27,7 +27,7 @@ size_t                      send(handle_t handle, const char* data, size_t size,
 size_t                      receive(handle_t handle, char* data, size_t size, std::error_code& ec, flags_t flags = 0);
 bool                        bind(handle_t handle, std::error_code& ec);
 socket_base::handle_type    accept(handle_t handle, std::error_code& ec);
-bool                        listen(handle_t handle, size_t, std::error_code& ec);
+bool                        listen(handle_t handle, int backlog, std::error_code& ec);
 bool                        connect(handle_t handle, std::error_code& ec);
 
 } // namespace syscall

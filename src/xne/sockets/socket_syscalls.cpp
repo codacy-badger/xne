@@ -72,8 +72,8 @@ socket_base::handle_type accept(socket_base::handle_type handle, std::error_code
     return client_handle;
 }
 
-bool listen(socket_base::handle_type handle, size_t maxconns, std::error_code& ec) {
-    if (::listen(handle, (int)maxconns) < 0) {
+bool listen(handle_t handle, int backlog, std::error_code& ec) {
+    if (::listen(handle, backlog) < 0) {
         ec.assign(errno, std::system_category());
         return false;
     }
