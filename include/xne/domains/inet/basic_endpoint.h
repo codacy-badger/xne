@@ -28,17 +28,27 @@ public:
     using address_type = address<protocol_type>;
 
 public:
+    basic_endpoint();
     basic_endpoint(const address_type& address, port_type port);
+    basic_endpoint& operator=(const basic_endpoint& other_endpoint);
     virtual ~basic_endpoint() = default;
 
 public:
     const address_type& ip_address() const noexcept;
     port_type port() const noexcept;
 
+    static basic_endpoint make_endpoint(const std::string& str, port_type port, const protocol_type& protocol = protocol_type());
+
 protected:
     address_type address_;
     port_type    port_;
 };
+
+template<typename InetProtocol>
+basic_endpoint<InetProtocol>::basic_endpoint()
+    : address_()
+    , port_(0)
+{}
 
 template<typename InetProtocol>
 inline basic_endpoint<InetProtocol>::basic_endpoint(const address_type& address, basic_endpoint::port_type port)
@@ -54,6 +64,18 @@ inline const typename basic_endpoint<InetProtocol>::address_type& basic_endpoint
 template<typename InetProtocol>
 inline typename basic_endpoint<InetProtocol>::port_type basic_endpoint<InetProtocol>::port() const noexcept {
     return port_;
+}
+
+template<typename InetProtocol>
+basic_endpoint<InetProtocol> basic_endpoint<InetProtocol>::make_endpoint(const std::string& str, basic_endpoint::port_type port, const protocol_type& protocol) {
+    return basic_endpoint(address_type::make_address(protocol, str), port);
+}
+
+template<typename InetProtocol>
+basic_endpoint<InetProtocol>& basic_endpoint<InetProtocol>::operator=(const basic_endpoint& other_endpoint) {
+    this->address_ = other_endpoint.address_;
+    this->port_ = other_endpoint.port_;
+    return *this;
 }
 
 } // namespace inet
